@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using LuaInterface;
+using System.IO;
+using System;
+using System.Reflection;
 
 namespace LuaForUnity
 {

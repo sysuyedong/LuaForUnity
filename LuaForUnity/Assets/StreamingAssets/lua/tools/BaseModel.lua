@@ -1,0 +1,1 @@
+BaseModel = BaseModel or BaseClass(EventDispatcher)
