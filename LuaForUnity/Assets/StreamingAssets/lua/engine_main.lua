@@ -3,6 +3,8 @@ Time = luanet.import_type("UnityEngine.Time")
 GameObject = luanet.import_type("UnityEngine.GameObject")
 Vector3 = luanet.import_type("UnityEngine.Vector3")
 PrimitiveType = luanet.import_type("UnityEngine.PrimitiveType")
+Input = luanet.import_type("UnityEngine.Input")
+KeyCode = luanet.import_type("UnityEngine.KeyCode")
 
 require("Assets.StreamingAssets.lua.tools.require_tools")
 require("Assets.StreamingAssets.lua.snake.SnakeController")

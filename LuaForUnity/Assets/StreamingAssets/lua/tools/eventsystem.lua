@@ -122,26 +122,26 @@ function EventSystem:Fire(event_id, ...)
 		return
 	end
 
-	local info = self.imm_dmp_list[event_id]
-	if info == nil then
-		info = {frame = Status.NowFrame, n = 1}
-		self.imm_dmp_list[event_id] = info
-	else
-		if info.frame ~= Status.NowFrame then
-			info.frame = Status.NowFrame
-			info.n = 1
-		else
-			info.n = info.n + 1
-		end
-	end
-
-	-- if self == RoleManager.Instance.mainRoleInfo.eventSys then
-	-- 	print("= = =主角Fire:", event_id, info.n, Status.NowFrame)
+	-- local info = self.imm_dmp_list[event_id]
+	-- if info == nil then
+	-- 	info = {frame = Status.NowFrame, n = 1}
+	-- 	self.imm_dmp_list[event_id] = info
+	-- else
+	-- 	if info.frame ~= Status.NowFrame then
+	-- 		info.frame = Status.NowFrame
+	-- 		info.n = 1
+	-- 	else
+	-- 		info.n = info.n + 1
+	-- 	end
 	-- end
-	if info.n > 1000 then
-		self:CallError(event_id)
-		return
-	end
+
+	-- -- if self == RoleManager.Instance.mainRoleInfo.eventSys then
+	-- -- 	print("= = =主角Fire:", event_id, info.n, Status.NowFrame)
+	-- -- end
+	-- if info.n > 1000 then
+	-- 	self:CallError(event_id)
+	-- 	return
+	-- end
 
 	local tmp_event = self.event_list[event_id] 
 	if tmp_event ~= nil then

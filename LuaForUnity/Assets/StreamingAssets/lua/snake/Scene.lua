@@ -18,8 +18,9 @@ function Scene:__init(width, height)
 	self.map = {}
 	self:GenerateMap()
 
+	self.begin_delay = 2
+	self.begin = false
 	self.start_time = Time.time
-	self:AddSnake("snake", Vector3(5, 0, 5))
 end
 
 function Scene:__delete( ... )
@@ -37,6 +38,12 @@ end
 function Scene:Update(now_time, elapse_time)
 	for k, v in pairs(self.snake_list) do
 		v:Update(now_time, elapse_time)
+	end
+
+	if not self.begin and now_time - self.start_time > self.begin_delay then
+		self.begin = true
+		self:AddSnake("snake", Vector3(5, 0, 5))
+		self:AddFood(nil, 9, 5)
 	end
 end
 
@@ -81,22 +88,43 @@ function Scene:AddSnake(key, pos)
 	if self.snake_list[key] then
 		return
 	end
-	local snake = SnakeObj.New(pos)
+	local snake = SnakeObj.New(key, pos)
 	self.snake_list[key] = snake
 end
 
-function Scene:AddFood(food_type)
+function Scene:RemoveSnake(key)
+	local snake = self.snake_list[key]
+	if snake then
+		snake:DeleteMe()
+		self.snake_list[key] = nil
+	end
+end
+
+function Scene:AddFood(food_type, x, y)
 	self.food_id = self.food_id + 1
 	local food = Food.New(food_type, self.food_id)
+	if x == nil or y == nil then
+		x, y = self:GetRandomEmptyPositionIndex()
+	end
+	food:SetPosition(x, y)
 	self.food_list[self.food_id] = food
-	self:SetMap(food.x, food.y, SceneGridType.Food)
 end
 
 function Scene:RemoveFood(id)
 	local food = self.food_list[id]
 	if food then
 		food:DeleteMe()
-		food = nil
+		self.food_list[id] = nil
+	end
+end
+
+function Scene:RemoveFoodByPos(x, y)
+	for k, v in pairs(self.food_list) do
+		if v.x == x and v.y == y then
+			v:DeleteMe()
+			self.food_list[k] = nil
+			break
+		end
 	end
 end
 
