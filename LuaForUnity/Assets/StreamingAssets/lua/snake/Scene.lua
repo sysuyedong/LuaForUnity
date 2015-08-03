@@ -13,10 +13,10 @@ function Scene:__init(width, height)
 	self.wall_list = {}
 	self.food_list = {}
 	self.snake_list = {}
+	self.obstacle_list = {}
 	self.food_id = 0
 	self.snake_id = 0
 	self.map = {}
-	self:GenerateMap()
 
 	self.begin_delay = 2
 	self.begin = false
@@ -42,8 +42,24 @@ function Scene:Update(now_time, elapse_time)
 
 	if not self.begin and now_time - self.start_time > self.begin_delay then
 		self.begin = true
-		self:AddSnake("snake", Vector3(5, 0, 5))
+		self:GenerateMap()
+		self:AddSnake("snake", Vector3(6, 0, 5))
 		self:AddFood(nil, 9, 5)
+		for k = 0, 20 do
+			self:AddObstacle(k, 10)
+		end
+		for k = 10, 35 do
+			self:AddObstacle(k, 20)
+		end
+		for k = 5, 15 do
+			self:AddObstacle(k, 28)
+		end
+		for k = 35, 46 do
+			self:AddObstacle(k, 33)
+		end
+		for k = 2, 10 do
+			self:AddObstacle(k, 45)
+		end
 	end
 end
 
@@ -58,7 +74,6 @@ function Scene:GenerateMap()
 				local obstacle = Obstacle.New()
 				obstacle:SetPosition(w, h)
 				table.insert(self.wall_list, obstacle)
-				self:SetMap(w, h, SceneGridType.Obstacle)
 			else
 				self:SetMap(w, h, SceneGridType.Empty)
 			end
@@ -106,6 +121,7 @@ function Scene:AddFood(food_type, x, y)
 	if x == nil or y == nil then
 		x, y = self:GetRandomEmptyPositionIndex()
 	end
+	print("Add Food: " .. x .. ", " .. y)
 	food:SetPosition(x, y)
 	self.food_list[self.food_id] = food
 end
@@ -128,13 +144,47 @@ function Scene:RemoveFoodByPos(x, y)
 	end
 end
 
+function Scene:GetNearestFood(pos)
+	local min = nil
+	local index = nil
+	for k, v in pairs(self.food_list) do
+		local food_pos = v:GetPosition()
+		local manhatton_dis = math.abs(food_pos.x - pos.x) + math.abs(food_pos.z - pos.z)
+		if min == nil then
+			min = manhatton_dis
+			index = k
+		end
+		if manhatton_dis < min then
+			min = manhatton_dis
+			index = k
+		end
+	end
+	if index ~= nil then
+		return self.food_list[index]
+	end
+end
+
+function Scene:AddObstacle(x, y)
+	local obstacle = Obstacle.New()
+	obstacle:SetPosition(x, y)
+	self.obstacle_list[y * self.width + x] = obstacle
+end
+
+function Scene:RemoveObstacle(x, y)
+	local obstacle = self.obstacle_list[y * self.width + x]
+	if obstacle then
+		obstacle:DeleteMe()
+		self.obstacle_list[y * self.width + x] = nil
+	end
+end
+
 function Scene:GetRandomEmptyPositionIndex()
 	math.randomseed(os.time())
 	-- Todo: more effective way to get a random position
 	repeat
 		x = math.random(1, self.width - 2)
 		y = math.random(1, self.height - 2)
-	until self:GetMap(x, y) ~= SceneGridType.Empty
+	until self:GetMap(x, y) == SceneGridType.Empty
 	return x, y
 end
 

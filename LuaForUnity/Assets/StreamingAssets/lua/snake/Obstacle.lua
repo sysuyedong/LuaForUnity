@@ -10,20 +10,23 @@ end
 
 function Obstacle:__delete( ... )
 	if self.obj then
-		GameObject.Destroy(self.obj)
+		self:DestroyObj(self.obj)
 	end
+end
+
+function Obstacle:DestroyObj(obj)
+	local pos = obj.transform.position
+	SnakeModel.Instance.scene:SetMap(pos.x, pos.z, SceneGridType.Empty)
+	GameObject.Destroy(obj)
 end
 
 function Obstacle:Create()
-	if self.obj == nil then
-		self.obj = GameObject.CreatePrimitive(PrimitiveType.Cube)
-	end
+	self.obj = GameObject.CreatePrimitive(PrimitiveType.Cube)
 end
 
 function Obstacle:SetPosition(x, y)
-	self.x = x or 0
-	self.y = y or 0
-	if self.obj then
-		self.obj.transform.position = Vector3(x, 0, y)
-	end
+	self.x = x
+	self.y = y
+	self.obj.transform.position = Vector3(x, 0, y)
+	SnakeModel.Instance.scene:SetMap(x, y, SceneGridType.Obstacle)
 end

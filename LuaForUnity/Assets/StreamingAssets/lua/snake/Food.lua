@@ -41,3 +41,9 @@ function Food:SetPosition(x, y)
 	self.obj.transform.position = Vector3(x, 0, y)
 	SnakeModel.Instance.scene:SetMap(x, y, SceneGridType.Food)
 end
+
+function Food:GetPosition()
+	if self.obj then
+		return self.obj.transform.position
+	end
+end
